@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-from ctypes import c_uint8, LittleEndianStructure, Union
+from __future__ import print_function
+from ctypes import c_uint8, BigEndianStructure, Union
 
 # probably need to use my fork: pip install git+https://github.com/artizirk/smbus2
 from smbus2 import SMBus
@@ -22,80 +23,88 @@ BATTERY_CHARGE_CURRENT_MSB_REG = 0x7a
 BATTERY_CHARGE_CURRENT_LSB_REG = 0x7b
 BATTERY_DISCHARGE_CURRENT_MSB_REG = 0x7c
 BATTERY_DISCHARGE_CURRENT_LSB_REG = 0x7d
+GPIO0_FEATURE_SET_REG = 0x90
+GPIO1_FEATURE_SET_REG = 0x92
+GPIO2_FEATURE_SET_REG = 0x93
+BATTERY_GAUGE_REG = 0xb9
 
-
-class ADC_ENABLE1_FLAGS_bits(LittleEndianStructure):
-    _fields_ = [
-                ("battery_voltage_adc_enable", c_uint8, 1),
-                ("battery_current_adc_enable", c_uint8, 1),
-                ("acin_voltage_adc_enable", c_uint8, 1),
-                ("acin_current_adc_enable", c_uint8, 1),
-                ("vbus_voltage_adc_enable", c_uint8, 1),
-                ("vbus_current_adc_enable", c_uint8, 1),
-                ("aps_voltage_adc_enable", c_uint8, 1),
-                ("ts_pin_adc_function_enable", c_uint8, 1),
-    ]
-
-
-class ADC_ENABLE1_FLAGS(Union):
-    _fields_ = [("b", ADC_ENABLE1_FLAGS_bits),
-                ("asbyte", c_uint8)]
+class Union(Union):
 
     def __repr__(self):
         return self.__str__()
 
     def __str__(self):
-        flags = " ".join("{}: {}".format(t[0], getattr(self.b, t[0])) for t in self.b._fields_)
-        return "< {} >".format(flags)
+        flags = " ".join("{}: {}".format(t[0], getattr(self._b, t[0])) for t in self._b._fields_)
+        return "<{}>".format(flags)
 
+class ADC_ENABLE1_FLAGS(Union):
+    class _b(BigEndianStructure):
+        _fields_ = [
+            ("battery_voltage_adc_enable", c_uint8, 1),
+            ("battery_current_adc_enable", c_uint8, 1),
+            ("acin_voltage_adc_enable", c_uint8, 1),
+            ("acin_current_adc_enable", c_uint8, 1),
+            ("vbus_voltage_adc_enable", c_uint8, 1),
+            ("vbus_current_adc_enable", c_uint8, 1),
+            ("aps_voltage_adc_enable", c_uint8, 1),
+            ("ts_pin_adc_function_enable", c_uint8, 1),
+        ]
 
-class POWER_INPUT_STATUS_FLAGS_bits(LittleEndianStructure):
-    _fields_ = [
-                ("acin_present", c_uint8, 1),
-                ("acin_available", c_uint8, 1),
-                ("vbus_present", c_uint8, 1),
-                ("vbus_available", c_uint8, 1),
-                ("vbus_direction", c_uint8, 1),
-                ("battery_direction", c_uint8, 1),  # 1: discharing, 0 :charged
-                ("acin_vbus_shorted", c_uint8, 1),
-                ("start_source", c_uint8, 1)
-    ]
+    _fields_ = [("_b", _b),
+                ("asbyte", c_uint8)]
+
+    _anonymous_ = ("_b",)
 
 
 class POWER_INPUT_STATUS_FLAGS(Union):
-    _fields_ = [("b", POWER_INPUT_STATUS_FLAGS_bits),
+    class _b(BigEndianStructure):
+        _fields_ = [
+            ("acin_present", c_uint8, 1),
+            ("acin_available", c_uint8, 1),
+            ("vbus_present", c_uint8, 1),
+            ("vbus_available", c_uint8, 1),
+            ("vbus_direction", c_uint8, 1),
+            ("battery_current_direction", c_uint8, 1),  # 1: charging, 0: discharging
+            ("acin_vbus_shorted", c_uint8, 1),
+            ("start_source", c_uint8, 1)
+        ]
+
+    _fields_ = [("_b", _b),
                 ("asbyte", c_uint8)]
 
-    def __repr__(self):
-        return self.__str__()
-
-    def __str__(self):
-        flags = " ".join("{}: {}".format(t[0], getattr(self.b, t[0])) for t in self.b._fields_)
-        return "< {} >".format(flags)
-
-class POWER_OPERATING_STATUS_FLAGS_bits(LittleEndianStructure):
-    _fields_ = [
-                ("over-temperature", c_uint8, 1),
-                ("battery_charging", c_uint8, 1),  # 1: charging, 0: not charging or charging done
-                ("battery_exists", c_uint8, 1), # 1: battery is connected, 0: not connected
-                ("_reserved_", c_uint8, 1),
-                ("battery_active", c_uint8, 1),
-                ("reached_desired_charge_current", c_uint8, 1),
-                ("_reserved_", c_uint8, 1),
-                ("_reserved_", c_uint8, 1)
-    ]
-
+    _anonymous_ = ("_b",)
 
 class POWER_OPERATING_STATUS_FLAGS(Union):
-    _fields_ = [("b", POWER_OPERATING_STATUS_FLAGS_bits),
+    class _b(BigEndianStructure):
+        _fields_ = [
+            ("over-temperature", c_uint8, 1),
+            ("battery_charging", c_uint8, 1),  # 1: charging, 0: not charging or charging done
+            ("battery_exists", c_uint8, 1), # 1: battery is connected, 0: not connected
+            ("_reserved_", c_uint8, 1),
+            ("battery_active", c_uint8, 1),
+            ("reached_desired_charge_current", c_uint8, 1),
+            ("_reserved_", c_uint8, 2),
+        ]
+
+    _fields_ = [("_b", _b),
                 ("asbyte", c_uint8)]
 
-    def __repr__(self):
-        return self.__str__()
+    _anonymous_ = ("_b",)
 
-    def __str__(self):
-        flags = " ".join("{}: {}".format(t[0], getattr(self.b, t[0])) for t in self.b._fields_)
-        return "< {} >".format(flags)
+
+class GPIO012_FEATURE_SET_FLAGS(Union):
+    class _b(BigEndianStructure):
+        _fields_ = [
+            ("gpio_rising_edge_interupt", c_uint8, 1),
+            ("gpio_falling_edge_interupt", c_uint8, 1),
+            ("_reserved_", c_uint8, 3),
+            ("gpio_function", c_uint8, 3),
+        ]
+
+    _fields_ = [("_b", _b),
+                ("asbyte", c_uint8)]
+
+    _anonymous_ = ("_b",)
 
 
 class AXP209(object):
@@ -123,7 +132,23 @@ class AXP209(object):
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         if self.autocleanup:
-            self.bus.close()
+            self.close()
+
+    def close(self):
+        self.bus.close()
+
+    @property
+    def gpio2_output(self):
+        pass
+
+    @gpio2_output.setter
+    def gpio2_output(self, val):
+        flags = GPIO012_FEATURE_SET_FLAGS()
+        if bool(val):
+            flags.gpio_function = 0b111
+        else:
+            flags.gpio_function = 0b000
+        self.bus.write_byte_data(AXP209_ADDRESS, GPIO2_FEATURE_SET_REG, flags.asbyte)
 
     @property
     def adc_enable1(self):
@@ -144,8 +169,8 @@ class AXP209(object):
         return flags
 
     @property
-    def battery_discharging(self):
-        return bool(self.power_input_status.b.battery_direction)
+    def battery_current_direction(self):
+        return bool(self.power_input_status.battery_current_direction)
 
     @property
     def power_operating_mode(self):
@@ -155,11 +180,11 @@ class AXP209(object):
 
     @property
     def battery_exists(self):
-        return bool(self.power_operating_mode.b.battery_exists)
+        return bool(self.power_operating_mode.battery_exists)
 
     @property
     def battery_charging(self):
-        return bool(self.power_operating_mode.b.battery_charging)
+        return bool(self.power_operating_mode.battery_charging)
 
     @property
     def battery_voltage(self):
@@ -191,7 +216,7 @@ class AXP209(object):
 
     @property
     def internal_temperature(self):
-        """ Returns temperature in celcius °C """
+        """ Returns temperature in celcius C """
         temp_msb = self.bus.read_byte_data(AXP209_ADDRESS, INTERNAL_TEMPERATURE_MSB_REG)
         temp_lsb = self.bus.read_byte_data(AXP209_ADDRESS, INTERNAL_TEMPERATURE_LSB_REG)
         # MSB is 8 bits, LSB is lower 4 bits
@@ -199,16 +224,25 @@ class AXP209(object):
         # -144.7c -> 000h,	0.1c/bit	FFFh -> 264.8c
         return temp*0.1-144.7
 
+    @property
+    def battery_gauge(self):
+        gauge_bin = self.bus.read_byte_data(AXP209_ADDRESS, BATTERY_GAUGE_REG)
+        gauge = gauge_bin & 0x7f
+        if gauge > 100:
+            return -1
+        return gauge
+
 def main():
     axp = AXP209()
-    print("internal_temperature:", "%.2f" % axp.internal_temperature, "°C")
-    print("power_operating_mode", hex(axp.power_operating_mode.asbyte))
-    print("battery_exists", axp.battery_exists)
-    print("battery_charging", axp.battery_charging)
-    print("battery_discharging", axp.battery_discharging)
-    print("battery_voltage", "%.1f" % axp.battery_voltage, "mV")
-    print("battery_discharge_current", "%.1f" % axp.battery_discharge_current, "mA")
-    print("battery_charge_current", "%.1f" % axp.battery_charge_current, "mA")
+    print("internal_temperature: %.2fC" % axp.internal_temperature)
+    print("battery_exists: %s" % axp.battery_exists)
+    print("battery_charging: %s" % ("charging" if axp.battery_charging else "done"))
+    print("battery_current_direction: %s" % ("charging" if axp.battery_current_direction else "discharging"))
+    print("battery_voltage: %.1fmV" % axp.battery_voltage)
+    print("battery_discharge_current: %.1fmA" % axp.battery_discharge_current)
+    print("battery_charge_current: %.1fmA" % axp.battery_charge_current)
+    print("battery_gauge: %d%%" % axp.battery_gauge)
+    axp.close()
 
 if __name__ == "__main__":
     main()
