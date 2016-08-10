@@ -8,17 +8,17 @@ Installation
 ------------
 
 
-        pip install git+https://github.com/artizirk/smbus2
-        pip install git+https://github.com/artizirk/python-axp209
+    pip install git+https://github.com/artizirk/smbus2
+    pip install git+https://github.com/artizirk/python-axp209
 
 
 Examples
 --------
 
-        >>> from axp209 import AXP209
-        >>> axp = AXP209()
-        >>> axp.battery_voltage
-        4144.8
-        >>> axp.battery_discharge_current
-        269.0
-        >>>
+    >>> from axp209 import AXP209
+    >>> axp = AXP209()
+    >>> axp.battery_voltage
+    4144.8
+    >>> axp.battery_discharge_current
+    269.0
+    >>>
