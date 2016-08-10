@@ -7,7 +7,7 @@ and uses patched smbus library https://github.com/artizirk/smbus2
 Installation
 ------------
 
-
+.. code::
     pip install git+https://github.com/artizirk/smbus2
     pip install git+https://github.com/artizirk/python-axp209
 
@@ -15,6 +15,7 @@ Installation
 Examples
 --------
 
+.. code::
     >>> from axp209 import AXP209
     >>> axp = AXP209()
     >>> axp.battery_voltage
