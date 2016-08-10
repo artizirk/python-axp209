@@ -216,7 +216,7 @@ class AXP209(object):
 
     @property
     def internal_temperature(self):
-        """ Returns temperature in celcius C """
+        """ Returns temperature in celsius C """
         temp_msb = self.bus.read_byte_data(AXP209_ADDRESS, INTERNAL_TEMPERATURE_MSB_REG)
         temp_lsb = self.bus.read_byte_data(AXP209_ADDRESS, INTERNAL_TEMPERATURE_LSB_REG)
         # MSB is 8 bits, LSB is lower 4 bits
