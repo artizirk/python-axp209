@@ -9,7 +9,7 @@ Installation
 
 .. code::
 
-    pip install git+https://github.com/artizirk/smbus2
+    pip install smbus2
     pip install git+https://github.com/artizirk/python-axp209
 
 

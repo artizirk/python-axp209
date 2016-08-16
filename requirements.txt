@@ -1,1 +1,1 @@
-git+https://github.com/artizirk/smbus2
+smbus2 >= 0.1.3

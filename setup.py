@@ -21,7 +21,7 @@ setup(
     url="https://github.com/artizirk/python-axp209",
     py_modules=['axp209'],
     long_description=long_description,
-    install_requires=['smbus2'],
+    install_requires=['smbus2 >= 0.1.3'],
     entry_points={'console_scripts': ['axp209 = axp209:main']},
     classifiers=[
         "Development Status :: 3 - Alpha",
