@@ -66,3 +66,19 @@ Blink CHIP status led
             sleep(1)
             axp.gpio2_output = True
             sleep(1)
+            
+There is also a commandline utility than you can use after installing it
+
+.. code::
+
+    root@sumochip1:~# axp209
+    internal_temperature: 67.00C
+    battery_exists: True
+    battery_charging: charging
+    battery_current_direction: discharging
+    battery_voltage: 3974.3mV
+    battery_discharge_current: 0.0mA
+    battery_charge_current: 0.0mA
+    battery_gauge: 76%
+    root@sumochip1:~# 
+
