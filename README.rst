@@ -15,7 +15,6 @@ Installation
 
 .. code::
 
-    pip install smbus2
     pip install axp209
 
 
