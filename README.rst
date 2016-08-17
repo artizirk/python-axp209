@@ -1,8 +1,14 @@
 A Python library for talking to the AXP209 power management unit
 ================================================================
 
-It should run on python2 and python3
-and uses patched smbus library https://github.com/artizirk/smbus2
+AXP209 is a pmu that is used on quite few Allwinner embeded boards, like C.H.I.P
+and Cubietruck.
+
+Because currently the sysfs api for AXP209 is in flux I wrote
+this library that bypasses the kernel and directly talks to the AXP209 over I2C
+bus using `smbus2 <https://github.com/kplindegaard/smbus2>`_ library.
+
+This library runs on both Python 2.7 and Python 3
 
 Installation
 ------------
@@ -10,7 +16,7 @@ Installation
 .. code::
 
     pip install smbus2
-    pip install git+https://github.com/artizirk/python-axp209
+    pip install axp209
 
 
 Examples
