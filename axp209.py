@@ -3,7 +3,6 @@
 from __future__ import print_function
 from ctypes import c_uint8, BigEndianStructure, Union
 
-# probably need to use my fork: pip install git+https://github.com/artizirk/smbus2
 from smbus2 import SMBus
 
 
