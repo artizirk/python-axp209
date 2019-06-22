@@ -111,7 +111,7 @@ class VBUS_CURRENT_LIMIT_CONTROL(Union):
         _fields_ = [
             ("vbus_available", c_uint8, 1),
             ("hold_pressure_limiting", c_uint8, 1),
-            ("hold_set_up", cuint8, 3),
+            ("hold_set_up", c_uint8, 3),
             ("_reserved_", c_uint8, 1),
             ("vbus_current_limit", c_uint8, 2),
         ]
