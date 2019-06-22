@@ -18,6 +18,14 @@ Installation
     pip install axp209
 
 
+SMBus bus number/object
+-----------------------
+
+The default SMBus object set in this library is an integer 0. You might need to 
+change to another integer[like 1] depending on your system, or pass an object.
+e.g. axp = AXP209(1) for the Olimex A20-SOM204.
+
+
 Examples
 --------
 
