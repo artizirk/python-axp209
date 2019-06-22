@@ -26,6 +26,7 @@ GPIO0_FEATURE_SET_REG = 0x90
 GPIO1_FEATURE_SET_REG = 0x92
 GPIO2_FEATURE_SET_REG = 0x93
 BATTERY_GAUGE_REG = 0xb9
+VBUS_IPSOUT_CHANNEL_MANAGEMENT_REG = 0X30 
 
 class Union(Union):
 
@@ -104,6 +105,21 @@ class GPIO012_FEATURE_SET_FLAGS(Union):
                 ("asbyte", c_uint8)]
 
     _anonymous_ = ("_b",)
+    
+class VBUS_CURRENT_LIMIT_CONTROL(Union):
+    class _b(BigEndianStructure):
+        _fields_ = [
+            ("vbus_available", c_uint8, 1),
+            ("hold_pressure_limiting", c_uint8, 1),
+            ("hold_set_up", cuint8, 3),
+            ("_reserved_", c_uint8, 1),
+            ("vbus_current_limit", c_uint8, 2),
+        ]
+
+    _fields_ = [("_b", _b),
+                ("asbyte", c_uint8)]
+
+    _anonymous_ = ("_b",)
 
 
 class AXP209(object):
@@ -160,6 +176,33 @@ class AXP209(object):
         if hasattr(flags, "asbyte"):
             flags = flags.asbyte
         self.bus.write_byte_data(AXP209_ADDRESS, ADC_ENABLE1_REG, flags)
+
+    @property
+    def vbus_current_limit(self):
+        """ Returns the current vbus current limit setting """
+        limits = { #00:900 mA; 01:500 mA; 10:100 mA; 11: not limit 
+            0: "900 mA", 
+            1: "500 mA", 
+            2: "100 mA",
+            3: "not limited",
+        } 
+        current_data = self.bus.read_byte_data(AXP209_ADDRESS, VBUS_IPSOUT_CHANNEL_MANAGEMENT_REG)
+        current_limit = current_data & 0x03
+        return limits.get(current_limit, "invalid setting")
+        
+    @vbus_current_limit.setter    
+    def vbus_current_limit(self, val):
+        flags = VBUS_CURRENT_LIMIT_CONTROL()
+    	limits = { #00:900 mA; 01:500 mA; 10:100 mA; 11: not limit 
+            0: "900 mA", 
+            1: "500 mA", 
+            2: "100 mA",
+            3: "no limit",
+        }
+        for setting, limit in limits.items():
+            if limit == val:
+                flags.vbus_current_limit = setting 
+        self.bus.write_byte_data(AXP209_ADDRESS, VBUS_IPSOUT_CHANNEL_MANAGEMENT_REG, flags.asbyte)
 
     @property
     def power_input_status(self):
@@ -241,6 +284,7 @@ def main(bus):
     print("battery_discharge_current: %.1fmA" % axp.battery_discharge_current)
     print("battery_charge_current: %.1fmA" % axp.battery_charge_current)
     print("battery_gauge: %d%%" % axp.battery_gauge)
+    print("vbus_current_limit: %s" % axp.vbus_current_limit)
     axp.close()
 
 if __name__ == "__main__":
