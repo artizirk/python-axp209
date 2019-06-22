@@ -231,8 +231,8 @@ class AXP209(object):
             return -1
         return gauge
 
-def main():
-    axp = AXP209()
+def main(bus):
+    axp = AXP209(bus)
     print("internal_temperature: %.2fC" % axp.internal_temperature)
     print("battery_exists: %s" % axp.battery_exists)
     print("battery_charging: %s" % ("charging" if axp.battery_charging else "done"))
@@ -244,4 +244,23 @@ def main():
     axp.close()
 
 if __name__ == "__main__":
-    main()
+    import argparse
+    
+    parser = argparse.ArgumentParser(description='Create AXP209 PMS')
+    parser.add_argument('--busint', dest='busint', action='store_true', help='bus argument is interger')
+    parser.add_argument('--no-busint', dest='busint', action='store_false', help='bus argument is object')
+    parser.add_argument('--busnumber', metavar='Integer', dest='busnumber', type=int, required=False, help='the SMBus bus number [integer]')
+    parser.add_argument('--busobj', metavar='bus Object', dest='busobj', required=False, help='SMBus bus object')
+    parser.set_defaults(busint=True)
+    args = parser.parse_args()
+    					
+    if args.busint is True and args.busint is not None:
+        if args.busnumber is None:
+            main(bus=0)
+        else:
+            main(bus=int(args.busnumber))
+    else:
+        if args.busobj is None:
+            main()
+        else:
+            main(bus=args.busobj)
