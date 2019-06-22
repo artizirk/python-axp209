@@ -193,7 +193,7 @@ class AXP209(object):
     @vbus_current_limit.setter    
     def vbus_current_limit(self, val):
         flags = VBUS_CURRENT_LIMIT_CONTROL()
-    	limits = { #00:900 mA; 01:500 mA; 10:100 mA; 11: not limit 
+        limits = { #00:900 mA; 01:500 mA; 10:100 mA; 11: not limit 
             0: "900 mA", 
             1: "500 mA", 
             2: "100 mA",
