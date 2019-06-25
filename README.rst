@@ -21,7 +21,7 @@ Installation
 SMBus bus number/object
 -----------------------
 
-The default SMBus object set in this library is an integer 0. You might need to 
+The default SMBus object set in this library is an integer 0. You might need to
 change to another integer[like 1] depending on your system, or pass an object.
 e.g. axp = AXP209(1) for the Olimex A20-SOM204.
 
@@ -73,7 +73,7 @@ Blink CHIP status led
             sleep(1)
             axp.gpio2_output = True
             sleep(1)
-            
+
 There is also a commandline utility than you can use after installing it
 
 .. code::
@@ -87,5 +87,4 @@ There is also a commandline utility than you can use after installing it
     battery_discharge_current: 0.0mA
     battery_charge_current: 0.0mA
     battery_gauge: 76%
-    root@sumochip1:~# 
-
+    root@sumochip1:~#
