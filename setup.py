@@ -12,12 +12,12 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
 
 setup(
     name="axp209",
-    version="0.0.2",
+    version="0.1",
     author="Arti Zirk",
     author_email="arti.zirk@gmail.com",
     description="axp209 is a pure python library for getting information from AXP209 Power Management Unit",
     license="MIT",
-    keywords=['sunxi', 'cubietruck', 'cubieboard', 'axp209', 'python', 'i2c', 'CHIP', 'linux'],
+    keywords=['sunxi', 'cubietruck', 'cubieboard', 'axp209', 'python', 'i2c', 'CHIP', 'linux', 'allwinner'],
     url="https://github.com/artizirk/python-axp209",
     py_modules=['axp209'],
     long_description=long_description,
